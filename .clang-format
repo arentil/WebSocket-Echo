@@ -1,0 +1,54 @@
+BasedOnStyle:  GNU
+AlignAfterOpenBracket: Align
+AllowAllParametersOfDeclarationOnNextLine: false
+AllowShortBlocksOnASingleLine: false
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: None
+# Uncommenting these lines will sometimes result in lines following an
+# if(){} or for(){} block being attached to the end of the block.
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+AlwaysBreakAfterDefinitionReturnType: None
+AlwaysBreakAfterReturnType: None
+BreakBeforeBraces: Allman
+# BraceWrapping:
+#   AfterClass:      true
+#   AfterControlStatement: true
+#   AfterEnum:       true
+#   AfterFunction:   true
+#   AfterNamespace:  true
+#   AfterStruct:     true
+#   AfterUnion:      true
+#   AfterExternBlock: true
+#   BeforeCatch:     true
+#   BeforeElse:      true
+#   IndentBraces:    true
+#   SplitEmptyFunction: false
+#   SplitEmptyRecord: false
+#   SplitEmptyNamespace: false
+#   BeforeLambdaBody: false
+ContinuationIndentWidth: 2
+IndentWidth: 4
+Cpp11BracedListStyle: true
+KeepEmptyLinesAtTheStartOfBlocks: false
+Language:        Cpp
+MaxEmptyLinesToKeep: 1
+NamespaceIndentation: Inner
+PenaltyExcessCharacter: 100
+PenaltyReturnTypeOnItsOwnLine: 1
+PointerAlignment: Left
+SortIncludes: true
+SpaceBeforeParens: Never
+SpacesInContainerLiterals: false
+Standard:        c++20
+FixNamespaceComments: true
+ShortNamespaceLines: 0
+AllowAllArgumentsOnNextLine: false
+AlwaysBreakBeforeMultilineStrings: false
+BinPackArguments: false
+AccessModifierOffset: -4
+PackConstructorInitializers: CurrentLine
+ConstructorInitializerIndentWidth: 0
+LambdaBodyIndentation: Signature
+AllowShortLambdasOnASingleLine: All
+AlignOperands: Align
