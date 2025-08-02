@@ -7,6 +7,7 @@ FetchContent_Declare(
   GIT_TAG v0.8.8
   GIT_SHALLOW ON
   GIT_SUBMODULES ""
+  GIT_PROGRESS TRUE
 )
 FetchContent_MakeAvailable(uSockets_content)
 file(GLOB_RECURSE SOURCES ${usockets_content_SOURCE_DIR}/src/*.c)

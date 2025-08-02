@@ -13,6 +13,6 @@ REM Cmake ..
 cmake .. -G "Visual Studio 17 2022" -DCMAKE_BUILD_TYPE=Debug
 
 REM Build solution(/v:diag for verbose)
-msbuild WebSocket-Echo.sln
+msbuild WebSocket-Echo.sln -m
 
 endlocal

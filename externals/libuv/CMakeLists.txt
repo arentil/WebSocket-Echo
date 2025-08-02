@@ -6,5 +6,6 @@ FetchContent_Declare(
   GIT_TAG v1.51.0
   GIT_SHALLOW ON
   GIT_SUBMODULES ""
+  GIT_PROGRESS TRUE
 )
 FetchContent_MakeAvailable(libuv)
