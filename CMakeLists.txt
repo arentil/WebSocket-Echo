@@ -13,7 +13,7 @@ if (MSVC)
   set(CMAKE_CXX_FLAGS "/std:c++23preview /EHsc")
   # /EHsc is needed for boost to generate boost::throw_exception handlers
 else()
-  set(CMAKE_CXX_FLAGS "-std=c++23")# -Wall -Wextra -pedantic -Wconversion -Wcast-align -Wunused -Wshadow -Wold-style-cast -lgcov")
+  set(CMAKE_CXX_FLAGS "-std=c++23 -Wall -Wextra -pedantic -Wconversion -Wcast-align -Wunused -Wshadow -Wold-style-cast -lgcov")
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE})
 endif ()
 
@@ -26,6 +26,9 @@ add_subdirectory(externals)
 # ===============================================================
 
 
+# ------------------------------------------
+#              WebSocket-Echo
+# ------------------------------------------
 set(CLIENT_SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/client/main.cpp)
 set(SERVER_SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/server/main.cpp)
 
@@ -34,13 +37,12 @@ add_executable(server ${SERVER_SOURCE_FILES})
 
 target_link_libraries(client PUBLIC Boost::asio Boost::beast)
 target_link_libraries(server PUBLIC uWebSockets)
+# ===============================================================
 
-message(STATUS ${CMAKE_CURRENT_BINARY_DIR})
 
 # ------------------------------------------
 #           POST BUILD COMMANDS
 # ------------------------------------------
-
 if (MSVC)
   # Copy generated ZLIB library into project output directory()
   add_custom_command(TARGET server 
@@ -49,3 +51,4 @@ if (MSVC)
                           "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}"
                     COMMENT "Copying ZLIB library into build folder")
 endif()
+# ===============================================================
