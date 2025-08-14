@@ -8,7 +8,7 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if (MSVC)
-  set(CMAKE_CXX_FLAGS "/std:c++23preview /EHsc")
+  set(CMAKE_CXX_FLAGS "/std:c++23preview /EHsc /bigobj")
   # /EHsc is needed for boost to generate boost::throw_exception handlers
 else()
   set(CMAKE_CXX_FLAGS "-std=c++23 -Wall -Wextra -pedantic -Wconversion -Wcast-align -Wunused -Wshadow -Wold-style-cast -lgcov")
@@ -24,12 +24,15 @@ add_subdirectory(externals)
 
 set(CLIENT_SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/client/main.cpp)
 set(SERVER_SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/server/main.cpp)
+set(WORKERS_SERVER_SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/server/workers_server.cpp)
 
 add_executable(client ${CLIENT_SOURCE_FILES})
 add_executable(server ${SERVER_SOURCE_FILES})
+add_executable(workers_server ${WORKERS_SERVER_SOURCE_FILES})
 
 target_link_libraries(client PUBLIC Boost::asio Boost::beast)
 target_link_libraries(server PUBLIC uWebSockets)
+target_link_libraries(workers_server PUBLIC uWebSockets)
 
 # ------------------------------------------
 #           POST BUILD COMMANDS
