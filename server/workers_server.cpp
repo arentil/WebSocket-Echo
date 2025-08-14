@@ -3,6 +3,7 @@
 #include <iostream>
 #include <unordered_map>
 #include <thread>
+#include <chrono>
 
 struct PerSocketData
 {
@@ -28,11 +29,13 @@ int main()
         .open = [loop](auto *ws) 
         {
             /* Open event here, you may access ws->getUserData() which points to a PerSocketData struct */
-            ws->send("Open connection");
+            ws->send("Hello from server");
             
             std::thread t1{[loop, ws](){
+                using namespace std::chrono_literals;
+                std::this_thread::sleep_for(2000ms);
                 loop->defer([ws](){
-                    ws->send("Threaded send");
+                    ws->send("Threaded, delayed send from server");
                 });
             }};
             t1.detach();
