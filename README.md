@@ -8,7 +8,7 @@ This is a simple WebSocket based, client-server echo project.
 ### Supported Platforms
 
 * Microsoft Windows
-* ~~Linux~~(TBD)
+* Linux
 
 ### Build
 
@@ -25,4 +25,15 @@ Using CLI:
     $ mkdir build && cd build
     $ cmake .. -G "Visual Studio 17 2022"
     $ msbuild WebSocket-Echo.sln -m
+```
+
+#### Linux
+
+Setup with:
+* CMake
+
+```
+    $ mkdir build && cd build
+    $ cmake .. -G Ninja
+    $ cmake --build .
 ```
