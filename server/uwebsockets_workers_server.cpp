@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <thread>
 #include <chrono>
+#include <queue>
 
 struct PerSocketData
 {
@@ -13,10 +14,63 @@ struct PerSocketData
 };
 int PerSocketData::id_counter = 0;
 
-int main() 
+class ThreadPool 
 {
+public:
+    explicit ThreadPool(size_t n) : stop(false) 
+    {
+        for (size_t i = 0; i < n; i++)
+            workers.emplace_back([this]{ workerLoop(); });
+    }
+
+    ~ThreadPool() 
+    {
+        { std::unique_lock lk(m); stop = true; }
+        cv.notify_all();
+        for (auto& t : workers) 
+            t.join();
+    }
+
+    template<class F>
+    void post(F&& f) 
+    {
+        { std::unique_lock lk(m); q.emplace(std::move(f)); }
+        cv.notify_one();
+    }
+private:
+    void workerLoop() 
+    {
+        for(;;)
+        {
+            std::function<void()> job;
+            {
+                std::unique_lock lk(m);
+                cv.wait(lk, [this]{ return !q.empty() || stop; });
+                if (stop && q.empty()) 
+                    return;
+                job = std::move(q.front()); 
+                q.pop();
+            }
+            job();
+        }
+    }
+
+    std::vector<std::thread> workers;
+    std::queue<std::function<void()>> q;
+    std::mutex m;
+    std::condition_variable cv;
+    bool stop;
+};
+
+int main()
+{
+    
     uWS::App app;
+    
+    ThreadPool t_pool(std::thread::hardware_concurrency() - 1);
+
     uWS::Loop* loop = uWS::Loop::get();
+
     app.ws<PerSocketData>("/*", {
         .compression = uWS::CompressOptions(uWS::DEDICATED_COMPRESSOR | uWS::DEDICATED_DECOMPRESSOR),
         .maxPayloadLength = 100 * 1024 * 1024,
@@ -26,24 +80,37 @@ int main()
         .resetIdleTimeoutOnSend = true,
         .sendPingsAutomatically = true,
         .upgrade = nullptr,
-        .open = [loop](auto *ws) 
+        .open = [loop, &app, &t_pool](auto *ws) 
         {
-            /* Open event here, you may access ws->getUserData() which points to a PerSocketData struct */
-            ws->send("Hello from server");
+            ws->send("Hello from server!");
             
-            std::thread t1{[loop, ws](){
-                using namespace std::chrono_literals;
-                std::this_thread::sleep_for(2000ms);
-                loop->defer([ws](){
-                    ws->send("Threaded, delayed send from server");
-                });
-            }};
-            t1.detach();
-        },
-        .message = [](auto *ws, std::string_view message, uWS::OpCode opCode) {
+            // subscribe this WS to topic
+            const auto ws_id_str = std::to_string(ws->getUserData()->id);
+            ws->subscribe("user:" + ws_id_str);
+            
+            t_pool.post([loop, &app, ws_id_str](){
+                // do some heavy logic...
 
-            std::cout << "Received: \"" << message << "\", socket id: " << ws->getUserData()->id << std::endl;
-            ws->send(message, opCode, false);
+                // publish on App()'s thread
+                loop->defer([&app, ws_id_str](){
+                    app.publish("user:" + ws_id_str, 
+                        "This is a message published using workers thread, "
+                        "however publish itself has been executed in App's loop "
+                        "using uWS::Loop::defer since its the only thread-safe function.", uWS::OpCode::TEXT);
+                });
+            });
+        },
+        .message = [loop, &app, &t_pool](auto *ws, std::string_view message, uWS::OpCode opCode) 
+        {
+            const auto ws_id_str = std::to_string(ws->getUserData()->id);
+            t_pool.post([loop, &app, ws_id_str, message = std::string{message}](){
+                // do some heavy logic...
+
+                // publish on App()'s thread
+                loop->defer([&app, ws_id_str, message](){
+                    app.publish("user:" + ws_id_str, message, uWS::OpCode::TEXT);
+                });
+            });
         },
         .dropped = [](auto *ws, std::string_view /*message*/, uWS::OpCode /*opCode*/) {
             /* A message was dropped due to set maxBackpressure and closeOnBackpressureLimit limit */
@@ -58,12 +125,14 @@ int main()
             /* Not implemented yet */
         },
         .close = [](auto *ws, int /*code*/, std::string_view message) {
-            std::cout << "Closing socket: " << ws->getUserData()->id << " " << message << std::endl;
             /* You may access ws->getUserData() here */
+            // unsubscribe socket from room?
         }
     }).listen(9001, [](auto *listen_socket) {
         if (listen_socket) {
             std::cout << "Listening on port " << 9001 << std::endl;
         }
     }).run();
+
+    return 0;
 }
