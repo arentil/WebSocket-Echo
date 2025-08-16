@@ -4,6 +4,8 @@
 #include <boost/asio/connect.hpp>
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/asio/post.hpp>
+
+#include <thread>
 #include <cstdlib>
 #include <iostream>
 #include <memory>
