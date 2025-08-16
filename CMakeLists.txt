@@ -29,17 +29,13 @@ add_subdirectory(externals)
 # ------------------------------------------
 #              WebSocket-Echo
 # ------------------------------------------
-set(CLIENT_SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/client/main.cpp)
-set(SERVER_SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/server/main.cpp)
-set(WORKERS_SERVER_SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/server/workers_server.cpp)
+add_executable(beast_client ${CMAKE_CURRENT_SOURCE_DIR}/client/beast_client.cpp)
+add_executable(uwebsockets_server ${CMAKE_CURRENT_SOURCE_DIR}/server/uwebsockets_server.cpp)
+add_executable(uwebsockets_workers_server ${CMAKE_CURRENT_SOURCE_DIR}/server/uwebsockets_workers_server.cpp)
 
-add_executable(client ${CLIENT_SOURCE_FILES})
-add_executable(server ${SERVER_SOURCE_FILES})
-add_executable(workers_server ${WORKERS_SERVER_SOURCE_FILES})
-
-target_link_libraries(client PUBLIC Boost::asio Boost::beast)
-target_link_libraries(server PUBLIC uWebSockets)
-target_link_libraries(workers_server PUBLIC uWebSockets)
+target_link_libraries(beast_client PUBLIC Boost::asio Boost::beast)
+target_link_libraries(uwebsockets_server PUBLIC uWebSockets)
+target_link_libraries(uwebsockets_workers_server PUBLIC uWebSockets)
 # ===============================================================
 
 
@@ -48,7 +44,7 @@ target_link_libraries(workers_server PUBLIC uWebSockets)
 # ------------------------------------------
 if (MSVC)
   # Copy generated ZLIB library into project output directory()
-  add_custom_command(TARGET server 
+  add_custom_command(TARGET uwebsockets_server 
                     POST_BUILD COMMAND ${CMAKE_COMMAND} -E 
                     copy "${zlib_BINARY_DIR}/${CMAKE_BUILD_TYPE}/zlibd.dll" 
                           "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}"
