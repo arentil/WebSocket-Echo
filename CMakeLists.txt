@@ -23,6 +23,8 @@ endif ()
 # ---------------------------------------------------------------
 set(FETCHCONTENT_QUIET FALSE)
 add_subdirectory(externals)
+
+find_package(Qt6 REQUIRED COMPONENTS WebSockets Core Network)
 # ===============================================================
 
 
@@ -33,9 +35,15 @@ add_executable(beast_client ${CMAKE_CURRENT_SOURCE_DIR}/client/beast_client.cpp)
 add_executable(uwebsockets_server ${CMAKE_CURRENT_SOURCE_DIR}/server/uwebsockets_server.cpp)
 add_executable(uwebsockets_workers_server ${CMAKE_CURRENT_SOURCE_DIR}/server/uwebsockets_workers_server.cpp)
 
-target_link_libraries(beast_client PUBLIC Boost::asio Boost::beast)
-target_link_libraries(uwebsockets_server PUBLIC uWebSockets)
-target_link_libraries(uwebsockets_workers_server PUBLIC uWebSockets)
+target_link_libraries(beast_client PRIVATE Boost::asio Boost::beast)
+target_link_libraries(uwebsockets_server PRIVATE uWebSockets)
+target_link_libraries(uwebsockets_workers_server PRIVATE uWebSockets)
+
+if (Qt6_FOUND)
+  qt_standard_project_setup()
+  qt_add_executable(qt_server ${CMAKE_CURRENT_SOURCE_DIR}/server/qt_server.cpp)
+  target_link_libraries(qt_server PRIVATE Qt6::Core Qt6::Network Qt6::WebSockets)
+endif()
 # ===============================================================
 
 

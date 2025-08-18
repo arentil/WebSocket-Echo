@@ -112,6 +112,9 @@
         "xtr1common": "cpp",
         "xtree": "cpp",
         "xutility": "cpp",
-        "resumable": "cpp"
+        "resumable": "cpp",
+        "qdebug": "cpp",
+        "qwebsocket": "cpp",
+        "qwebsocketserver": "cpp"
     }
 }
