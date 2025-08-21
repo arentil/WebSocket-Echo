@@ -27,6 +27,7 @@ BreakBeforeBraces: Allman
 #   SplitEmptyRecord: false
 #   SplitEmptyNamespace: false
 #   BeforeLambdaBody: false
+ColumnLimit: 100
 ContinuationIndentWidth: 2
 IndentWidth: 4
 Cpp11BracedListStyle: true
