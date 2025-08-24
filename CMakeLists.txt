@@ -43,8 +43,10 @@ if (Qt6_FOUND)
   qt_standard_project_setup()
   qt_add_executable(qt_server ${CMAKE_CURRENT_SOURCE_DIR}/server/qt_server.cpp)
   qt_add_executable(qt_workers_server ${CMAKE_CURRENT_SOURCE_DIR}/server/qt_workers_server.cpp)
+  qt_add_executable(qt_client ${CMAKE_CURRENT_SOURCE_DIR}/client/qt_client.cpp)
   target_link_libraries(qt_server PRIVATE Qt6::Core Qt6::Network Qt6::WebSockets)
   target_link_libraries(qt_workers_server PRIVATE Qt6::Core Qt6::Network Qt6::WebSockets Qt::Concurrent)
+  target_link_libraries(qt_client PRIVATE Qt6::Core Qt6::Network Qt6::WebSockets Qt::Concurrent)
 endif()
 # ===============================================================
 

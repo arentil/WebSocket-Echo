@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
         QPointer<QWebSocket> ws = socket;
         QtConcurrent::run(&pool, [ws, message](){
             if (!ws) return;
-
+            // do some heavy logic
             QMetaObject::invokeMethod(ws.data(), [ws, message]{
                     ws->sendTextMessage(message);
                 }, Qt::QueuedConnection);

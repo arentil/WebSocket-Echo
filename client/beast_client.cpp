@@ -94,6 +94,8 @@ public:
         if(ec)
             return fail(ec, "handshake");
 
+       std::cout << "Connected to server" << std::endl;
+
         ws_.async_read(
           buffer_,
           beast::bind_front_handler(&session::on_read, shared_from_this()));

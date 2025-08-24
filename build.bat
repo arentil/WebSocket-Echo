@@ -15,4 +15,6 @@ cmake .. -G "Visual Studio 17 2022" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_PREFIX_PATH
 REM Build solution(/v:diag for verbose)
 msbuild WebSocket-Echo.sln -m
 
+REM set PATH=C:\Qt\6.9.1\msvc2022_64\bin;%PATH%
+
 endlocal

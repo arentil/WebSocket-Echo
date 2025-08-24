@@ -115,6 +115,7 @@
         "resumable": "cpp",
         "qdebug": "cpp",
         "qwebsocket": "cpp",
-        "qwebsocketserver": "cpp"
+        "qwebsocketserver": "cpp",
+        "generator": "cpp"
     }
 }
