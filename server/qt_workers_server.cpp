@@ -1,10 +1,10 @@
 #include <QCoreApplication>
-#include <QWebSocketServer>
-#include <QWebSocket>
-#include <QThreadPool>
-#include <QtConcurrent>
-#include <QPointer>
 #include <QDebug>
+#include <QPointer>
+#include <QThreadPool>
+#include <QWebSocket>
+#include <QWebSocketServer>
+#include <QtConcurrent>
 
 #include <functional>
 
@@ -20,12 +20,16 @@ class echo_server : public QObject
 
 public:
     echo_server(const quint16 port, QObject* parent = nullptr)
-    : QObject(parent), server_("WebSocket Echo Server", QWebSocketServer::NonSecureMode, this)
+    : QObject(parent),
+      server_("WebSocket Echo Server", QWebSocketServer::NonSecureMode, this)
     {
-        if (server_.listen(QHostAddress::Any, port))
+        if(server_.listen(QHostAddress::Any, port))
         {
             qDebug() << "Listening on port " << port;
-            connect(&server_, &QWebSocketServer::newConnection, this, &echo_server::on_new_connection);
+            connect(&server_,
+                    &QWebSocketServer::newConnection,
+                    this,
+                    &echo_server::on_new_connection);
         }
     }
 
@@ -37,7 +41,7 @@ public:
 private Q_SLOTS:
     void on_new_connection()
     {
-        QWebSocket *socket = server_.nextPendingConnection(); // socket can be saved for later usage
+        QWebSocket* socket = server_.nextPendingConnection(); // socket can be saved for later usage
         connect(socket, &QWebSocket::textMessageReceived, this, &echo_server::on_message);
         connect(socket, &QWebSocket::disconnected, this, &echo_server::on_disconnected);
     }
@@ -45,13 +49,13 @@ private Q_SLOTS:
     void on_message(const QString& message)
     {
         QWebSocket* client = qobject_cast<QWebSocket*>(sender());
-        if (on_message_handler_)
+        if(on_message_handler_)
             on_message_handler_(client, message);
     }
 
     void on_disconnected()
     {
-        QWebSocket *client = qobject_cast<QWebSocket *>(sender());
+        QWebSocket* client = qobject_cast<QWebSocket*>(sender());
         client->deleteLater();
     }
 
@@ -60,7 +64,7 @@ private:
     on_message_handler_type on_message_handler_;
 };
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     QCoreApplication a(argc, argv);
 
@@ -68,17 +72,22 @@ int main(int argc, char *argv[])
     pool.setMaxThreadCount(QThread::idealThreadCount());
 
     echo_server echo_server(9001);
-    echo_server.on_message_handler([&pool](QWebSocket* socket, const QString& message){
-        QPointer<QWebSocket> ws = socket;
-        QtConcurrent::run(&pool, [ws, message](){
-            if (!ws) return;
-            // do some heavy logic
-            QMetaObject::invokeMethod(ws.data(), [ws, message]{
-                    ws->sendTextMessage(message);
-                }, Qt::QueuedConnection);
-        });
-    });
-
+    echo_server.on_message_handler(
+      [&pool](QWebSocket* socket, const QString& message)
+      {
+          QPointer<QWebSocket> ws = socket;
+          QtConcurrent::run(&pool,
+                            [ws, message]()
+                            {
+                                if(!ws)
+                                    return;
+                                // do some heavy logic
+                                QMetaObject::invokeMethod(
+                                  ws.data(),
+                                  [ws, message] { ws->sendTextMessage(message); },
+                                  Qt::QueuedConnection);
+                            });
+      });
 
     return a.exec();
 }

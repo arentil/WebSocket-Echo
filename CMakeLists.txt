@@ -9,14 +9,6 @@ project(WebSocket-Echo VERSION 0.0.1 LANGUAGES C CXX)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-if (MSVC)
-  set(CMAKE_CXX_FLAGS "/std:c++23preview /EHsc /bigobj")
-  # /EHsc is needed for boost to generate boost::throw_exception handlers
-else()
-  set(CMAKE_CXX_FLAGS "-std=c++23 -Wall -Wextra -pedantic -Wconversion -Wcast-align -Wunused -Wshadow -Wold-style-cast -lgcov")
-  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE})
-endif ()
-
 
 # ---------------------------------------------------------------
 #        Externals: libuv, ZLIB, uSockets, uWebSockets, Boost
@@ -26,6 +18,15 @@ add_subdirectory(externals)
 
 find_package(Qt6 REQUIRED COMPONENTS WebSockets Core Network Concurrent)
 # ===============================================================
+
+
+if (MSVC)
+  set(CMAKE_CXX_FLAGS "/std:c++23preview /EHsc /bigobj")
+  # /EHsc is needed for boost to generate boost::throw_exception handlers
+else()
+  set(CMAKE_CXX_FLAGS "-std=c++23 -Wall -Wextra -pedantic -Wconversion -Wcast-align -Wunused -Wshadow -Wold-style-cast -lgcov")
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE})
+endif ()
 
 
 # ------------------------------------------
